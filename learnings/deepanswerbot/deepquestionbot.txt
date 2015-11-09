@@ -1,0 +1,80 @@
+[start] IsA [end]
+Why does a compassion have to be a virtue?
+Why does a calf have to be a cow?
+Why do honesties have to be virtues?
+Why must singers be posers?
+Why must a soccer be a sport?
+Why are hourglasses considered to be clocks?
+Why are weddings considered to be parties?
+Why are daphnias so often considered to be crustaceans?
+
+= Why do(es) a(n) [start] have to be a(n) [end]?
+= Why must [start] be [end]?
+= Why are [start] (so often) considered to be [end]?
+
+> Perhaps without [end.RelatedTo.start.plural] we wouldn't have a [start.singular]
+> Because [start.plural] are [end.IsA.plural]
+> One could argue it's due to [start.UsedFor.start.plural] being used for [start.plural]
+
+
+[end] AtLocation [start]
+Why does a cemetery have a tombstone?
+
+= Why does a(n) [end] have a(n) [start]?
+
+
+[start] AtLocation [end]
+Why are attics kept in homes?
+Why are cookies found in boxes?
+Why are dishes found in pantries?
+Why is a beggar found in a street?
+Why is an isle found near a church?
+
+= Why (are|is a(n)) [start] kept in [end]?
+= Why (are|is a(n)) [start] found in [end]?
+= Why (are|is a(n)) [start] found near a [end]?
+
+
+[start] AtLocation [end], AtLocation [subject]
+Meteors are found in orbits, right? But where do you find firelights?
+Pans are found in ovens, right? But where do you keep genus Dasyproctas?
+Bureaucracies are found in universities, right? So where do you keep associations?
+
+= [start] are found in [end], right? But where do you find [subject]?
+
+
+[start] AtLocation [end], AtLocation [subject], [guess]
+Knobs are kept in doors, right? So where do we find folderals? An arena?
+Darknesses are found in cellars. So where do you find preservations? A digs?
+Midways are kept in carnivals. So where do we find centers? A tumult?
+
+
+[start] AtLocation [subject], AtLocation [end]
+What if you found a gallery in a repertory, instead of in a museum?
+
+= What if you found [start] in [subject], instead of in [end]?
+
+
+[start] RelatedTo [end] -> IsA [guess] -> IsA [thing]
+Have you ever considered a milk that is black instead of white?
+
+= Have you ever considered a [start] that is [guess] instead of [end]?
+
+
+If a storm is not unusual, is it still a storm?
+
+Why are moist rags so common, and wet rags comparitively uncommon?
+
+What if you found a gravel near a throw, instead of in a street?
+What if you found a neck in a reptile, instead of in a mammal?
+
+If there are devastating depressions, why not devastating miseries? Or destructive fountains?
+
+Why do we finish rooms?
+
+Why are fast runs so frequent, but high-speed runs comparitively rare?
+
+What if there were a hemisphere that did not have a continent?
+
+Napkins are found in homes, right? So where do we keep trousers?
+
