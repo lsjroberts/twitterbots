@@ -4,7 +4,10 @@
 import re
 import random
 import requests
+import inflect
 from twitterbot import TwitterBot
+
+inflector = inflect.engine()
 
 class DeepAnswerBot(TwitterBot):
     unrecognised_tweet = "@gelatindesign I could not understand this question :("
@@ -136,9 +139,8 @@ class DeepAnswerBot(TwitterBot):
         When calling post_tweet, you MUST include reply_to=tweet, or
         Twitter won't count it as a reply.
         """
-        # print "---"
-        # print tweet.text
-        # print tweet.created_at
+        print "---"
+        print tweet.text
 
         tweet_format = self.get_tweet_format(tweet)
 
@@ -147,6 +149,7 @@ class DeepAnswerBot(TwitterBot):
         else:
             text = DeepAnswerBot.unrecognised_tweet + ' ' + self._tweet_url(tweet)
 
+        print text
         self.post_tweet(text, reply_to=tweet)
 
 
@@ -158,23 +161,23 @@ class DeepAnswerBot(TwitterBot):
         """
         tweet_formats = [
             ('IsA', re.compile(ur'Why do(?:es)?(?: an?)? (?P<start>[a-z\s]+) have to be(?: an?)? (?P<end>[a-z\s]+)\?', re.IGNORECASE)),
-            ('IsA', re.compile(ur'Why must?(?: an?)? (?P<start>[a-z\s]+) be(?: an?)? (?P<end>[a-z\s]+)\?', re.IGNORECASE)),
-            ('IsA', re.compile(ur'Why(?: are|is)? (?P<start>[a-z\s]+)(?: so often) considered to be(?: an?)? (?P<end>[a-z\s]+)\?', re.IGNORECASE)),
+            ('IsA', re.compile(ur'Why must(?: an?)? (?P<start>[a-z\s]+) be(?: an?)? (?P<end>[a-z\s]+)\?', re.IGNORECASE)),
+            ('IsA', re.compile(ur'Why(?: are|is)?(?: an?)? (?P<start>[a-z\s]+)(?: so often) considered to be(?: an?)? (?P<end>[a-z\s]+)\?', re.IGNORECASE)),
 
             ('AtLocation', re.compile(ur'Why do(?:es)?(?: an?)? (?P<end>[a-z\s]+) have(?: an?)? (?P<start>[a-z\s]+)\?', re.IGNORECASE)),
             ('AtLocation', re.compile(ur'Why (?:are|is)?(?: an?)? (?P<start>[a-z\s]+) (?:kept|found) (?:in|near)(?: an?)? (?P<end>[a-z\s]+)\?', re.IGNORECASE)),
 
-            ('AtLocation.GuessAtLocation', re.compile(ur'(?P<start>[a-z\s]+) are (?:kept|found) (?:near|in) (?P<end>[a-z\s]+)(?:, right\?|.)? (?:So|But) where do (?:you|we) (?:keep|find) (?P<subject>[a-z\s]+)\?(?: An?)? (?P<guess>[a-z\s]+)\?', re.IGNORECASE)),
+            ('AtLocation.GuessAtLocation', re.compile(ur'(?P<start>[a-z\s]+) are (?:kept|found) (?:near|in)(?: an?)? (?P<end>[a-z\s]+)(?:, right\?|.)? (?:So|But) where do (?:you|we) (?:keep|find)(?: an?)? (?P<subject>[a-z\s]+)\?(?: an?)?(?: an?)? (?P<guess>[a-z\s]+)\?', re.IGNORECASE)),
 
-            ('AtLocation.SubjectAtLocation', re.compile(ur'(?P<start>[a-z\s]+) are (?:kept|found) (?:near|in) (?P<end>[a-z\s]+)(?:, right\?|.)? (?:So|But) where do (?:you|we) (?:keep|find) (?P<subject>[a-z\s]+)\?', re.IGNORECASE)),
+            ('AtLocation.SubjectAtLocation', re.compile(ur'(?P<start>[a-z\s]+) are (?:kept|found) (?:near|in)(?: an?)? (?P<end>[a-z\s]+)(?:, right\?|.)? (?:So|But) where do (?:you|we) (?:keep|find)(?: an?)? (?P<subject>[a-z\s]+)\?', re.IGNORECASE)),
 
-            ('AtLocation.InsteadAtLocation', re.compile(ur'What if (?:you|we) (?:kept|found)(?: an?)? (?P<start>[a-z\s]+) in(?: an?)? (?P<subject>[a-z\s]+), instead of (?:in|near)(?: an?)? (?P<end>[a-z\s]+)\?', re.IGNORECASE)),
+            ('AtLocation.InsteadAtLocation', re.compile(ur'What if you (?:kept|found)(?: an?)? (?P<start>[a-z\s]+) (?:near|in)(?: an?)? (?P<startLocation>[a-z\s]+), instead of (?:near|in)(?: an?)? (?P<end>[a-z\s]+)\?', re.IGNORECASE)),
 
             ('RelatedTo.InsteadIsA', re.compile(ur'Have (?:you|we) ever considered(?: an?)? (?P<start>[a-z\s]+) that is(?: an?)? (?P<guess>[a-z\s]+) instead of(?: an?)? (?P<end>[a-z\s]+)\?', re.IGNORECASE)),
 
-            ('Compared', re.compile(ur'Why (?:are|is) (?P<start>[a-z\s]+)(?:so) (?P<startAttribute>[a-z\s]+), and (?P<end>[a-z\s]+)(?:comparitively) (?P<endAttribute>[a-z\s]+)\?', re.IGNORECASE)),
+            ('Compared', re.compile(ur'Why (?:are|is)(?: an?)? (?P<start>[a-z\s]+)(?:so) (?P<startAttribute>[a-z\s]+), and(?: an?)? (?P<end>[a-z\s]+)(?:comparitively) (?P<endAttribute>[a-z\s]+)\?', re.IGNORECASE)),
 
-            ('StillA', re.compile(ur'If(?: an?)? (?P<start>[a-z\s]+) is(?: not)? (?P<startAttribute>[a-z\s]+), is it still(?: an?)? [a-z\s]+\?', re.IGNORECASE)),
+            ('StillA', re.compile(ur'If(?: an?)? (?P<start>[a-z\s]+) is(?: not)?(?: an?)? (?P<startAttribute>[a-z\s]+), is it still [a-z\s]+\?', re.IGNORECASE)),
         ]
 
         for tweet_format in tweet_formats:
@@ -194,60 +197,73 @@ class DeepAnswerBot(TwitterBot):
 
         if relation == 'IsA':
             templates = [
-                "Perhaps without [end.RelatedTo] we wouldn't have a [start]",
-                "If [end.IsA] is [end] then surely the [start] can only be [end] too",
-                "When [start.RelatedTo] becomes [end.RelatedTo] there is no other reality",
-                "The greatest [start] of the greatest number is the foundation of [end]",
-                # "[start] consists in doing [end]",
-                "If [end] did not exist it would be necessary to invent [start]",
-                # "[end] is the mother of [start]",
-                # "[end] is the measure of all [start]",
-                "It is wrong always, everywhere and for everyone, to believe anything upon insufficient [start]",
-                "There is but one truly serious [end] problem, and that is [start]",
-                "I once had a [start], it was a nice [start]. But that's not relevant now."
+                "Perhaps without [singular_noun:a:end.RelatedTo] we wouldn't have [singular_noun:a:start]",
+                "If [a:end.IsA] is [a:end] then surely the [start] can only be [a:end] too",
+                "When [singular_noun:a:start.RelatedTo] becomes [singular_noun:a:end.RelatedTo] there is no other reality",
+                "The greatest [plural:start] of the greatest number is the foundation of [plural:end]",
+                "[singular_noun:start] consists in doing [plural:end]",
+                "If [plural:end] did not exist it would be necessary to invent [plural:start]",
+                "It is wrong always, everywhere and for everyone, to believe anything upon insufficient [plural:start]",
+                "There is but one truly serious [singular_noun:end] problem, and that is [plural:start]",
+                "I once had [singular_noun:a:start], it was a nice [singular_noun:start]. But that's not relevant now."
             ]
         elif relation == 'AtLocation':
             templates = [
-                "Where else would [start] be?",
-                "[end] are near [end.AtLocation], so [start] must be there too",
-                "Because [start] is [start.IsA.end] and [end] is [end.IsA.end]"
+                "Where else would [singular_noun:a:start] be?",
+                "[plural:end] are near [plural:end.AtLocation], so [singular_noun:a:start] must be there too",
+                "Because [singular_noun:a:start] is [singular_noun:a:start.IsA.end] and [singular_noun:a:end] is [singular_noun:a:end.IsA.end]",
+                "I found [singular_noun:a:start] once, it wasn't near [singular_noun:a:end], I miss my [singular_noun:a:start] :(",
+                u"╰( ⁰ ਊ ⁰ )━☆ﾟ.*･｡ﾟ"
             ]
         elif relation == 'AtLocation.SubjectAtLocation':
             templates = [
-                "I'd usually look for [subject] near [subject.AtLocation]",
-                "It depends, if [subject] is [subject.IsA] then it would be near [start.AtLocation]",
-                "One cannot step twice in the same [end], so [subject] must be near [subject.AtLocation]"
+                "I'd usually look for [singular_noun:a:subject] near [plural:subject.AtLocation]",
+                "It depends, if [singular_noun:a:subject] is [singular_noun:a:subject.IsA] then it would be near [plural:start.AtLocation]",
+                "One cannot step twice in the same [singular_noun:end], so [singular_noun:a:subject] must be near [subject.AtLocation]",
+                "To put it bluntly, not near [singular_noun:a:end]",
+                "I find [plural:subject] in my imagination!",
+                u"¯\_(ツ)_/¯"
             ]
         elif relation == 'AtLocation.GuessAtLocation':
             templates = [
-                "Nope, [guess] is [guess.IsA] so it seems unlikely",
-                "Only when [start] has a [start.HasA]",
-                "Well, [guess] is a nice place to be, so long as [start] can be [start.UsedFor]",
-                "[start] lies in [end], and perfect [subject] lies in the best [guess]"
+                "Nope, [singular_noun:a:guess] is [singular_noun:a:guess.IsA] so it seems unlikely",
+                "Only when [singular_noun:a:start] has [singular_noun:a:start.HasA]",
+                "Well, [singular_noun:guess] is a nice place to be, so long as [singular_noun:a:start] can be [start.UsedFor]",
+                "[singular_noun:a:start] lies in [singular_noun:a:end], and perfect [plural:subject] lies in the best [singular_noun:guess]",
+                "Sometimes, it depends on if the [singular_noun:subject] is [singular_noun:a:subject.IsA]",
+                u"I know the answer to that one but I'm not going to tell you ᕕ( ⁰ ▽ ⁰ )ᕗ"
             ]
         elif relation == 'AtLocation.InsteadAtLocation':
             templates = [
-                "Woah... and what if a [start] can [start.CapableOf]?",
-                "I doubt it would make much difference to a [start] considering it's not a [end.IsA]"
+                "Woah... and what if [singular_noun:a:start] can [start.CapableOf]?",
+                "I doubt it would make much difference to [singular_noun:a:start] considering it's not [singular_noun:a:end.IsA]",
+                "I would run scared, [singular_noun:a:start] should never be near [plural:startLocation]",
+                "What? No, [singular_noun:a:start] would never be near [singular_noun:a:end]"
             ]
         elif relation == 'RelatedTo.InsteadIsA':
             templates = [
-                "The [guess] [start] is that which overcomes not only it's [end] but also it's [start.HasA]",
-                "When [guess] can [guess.CapableOf] I would suggest it must also be [end]"
+                "The [guess] [singular_noun:start] is that which overcomes not only it's [end] but also it's [singular_noun:start.HasA]",
+                "When [singular_noun:a:guess] can [guess.CapableOf] I would suggest it must also be [singular_noun:a:end]",
+                "[singular_noun:a:guess] is the sign of the [singular_noun:start], it is the opium of the people",
+                u"(ʘᗩʘ’)"
             ]
         elif relation == 'Compared':
             templates = [
-                "Occasionally a [endAttribute] [end] can also be a [startAttribute] [start]"
+                "Occasionally a [endAttribute] [singular_noun:end] can also be a [startAttribute] [singular_noun:start]",
+                "The only thing I know is that I know [plural:start] are [singular_noun:start.IsA]",
+                "[start] [startAttribute] for the worst, if they be not altered for the [endAttribute] designedly"
             ]
         elif relation == 'StillA':
             templates = [
-                "Perhaps if a [start] is also a [start.IsA] then it could be",
-                "Sometimes a [start] can be [startAttribute], but that is rare"
+                "Perhaps if [singular_noun:a:start] is also [singular_noun:a:start.IsA] then it could be",
+                "Sometimes [singular_noun:a:start] can be [startAttribute], but that is rare",
+                "I don't know why [plural:start] are [startAttribute], but I'm pretty sure it's not to [start.CapableOf]"
             ]
 
         if templates:
             random.shuffle(templates)
             for template in templates:
+                # print "-- " + template
                 composed = self.compose_tweet_with_concepts(template, matches)
                 if composed:
                     return composed
@@ -264,20 +280,32 @@ class DeepAnswerBot(TwitterBot):
         items = pattern.findall(template)
 
         for item in items:
-            subjectGroup, relation, rest = just(3, item.split('.'))
+            splits = item.split(':')
+            inflections = splits[:-1]
+            concepts = splits[-1:][0]
+
+            subjectGroup, relation, rest = just(3, concepts.split('.'))
             subject = subjects.group(subjectGroup)
+
             if subject is not None:
                 concept = subject
                 if relation:
                     concept = self.get_concept(subject, relation)
                     if concept is None:
                         return None
-                composed = composed.replace('[' + item + ']', concept)
+                inflected = concept
+                for inflection in inflections:
+                    inflectorMethod = getattr(inflector, inflection)
+                    temp = inflectorMethod(inflected)
+                    if temp:
+                        inflected = temp
+                composed = composed.replace('[' + item + ']', inflected)
 
         return composed
 
     def get_concept(self, subject, relation):
         baseUrl = 'http://conceptnet5.media.mit.edu/data/5.4/c/en/'
+        self.log('Getting concept from {}'.format(baseUrl + subject))
         r = requests.get(baseUrl + subject)
         json = r.json()
         choices = []

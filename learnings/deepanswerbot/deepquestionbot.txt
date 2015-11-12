@@ -51,6 +51,7 @@ Midways are kept in carnivals. So where do we find centers? A tumult?
 
 [start] AtLocation [subject], AtLocation [end]
 What if you found a gallery in a repertory, instead of in a museum?
+What if you found a newspaper near a dress shop, instead of in a bookstore?
 
 = What if you found [start] in [subject], instead of in [end]?
 
