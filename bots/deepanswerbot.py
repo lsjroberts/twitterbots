@@ -24,10 +24,10 @@ class DeepAnswerBot(TwitterBot):
         ############################
         # REQUIRED: LOGIN DETAILS! #
         ############################
-        self.config['api_key'] = 'EVbRnjczP1OR3CVBmxDMQ2eDN'
-        self.config['api_secret'] = 'XWx4FcIEOI3mpWoGWW9TYfx9njsJnXdGer8ztaDaVcdcA8nO7Z'
-        self.config['access_key'] = '4136721273-LLOCwFedBAj8bhN9UoEydCEjGJr57bzvr9LSjF3'
-        self.config['access_secret'] = 'aAUjjCEai9IEIgcT2HmL8VrjeLmaeiDMu2N1sDTXe5ckr'
+        self.config['api_key'] = ''
+        self.config['api_secret'] = ''
+        self.config['access_key'] = ''
+        self.config['access_secret'] = ''
 
 
         ######################################
